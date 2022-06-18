@@ -68,6 +68,17 @@ for(idx in seq_along(offerUrls)){
                                         'NA'
                                     })
     
+    forma[idx] <- if(grepl("hybr", forma[idx]))
+                     "praca hybrydowa"
+else
+    forma[idx]
+    
+    forma[idx] <- if(grepl("home", forma[idx]))
+        "praca zdalna"
+    else
+        forma[idx]
+    
+    
     etat[idx] <- tryCatch(content(str_1) %>%
                                     html_element(xpath = "//div[@data-test = 'sections-benefit-work-schedule-text']") %>% html_text2(), error = function(e){
                                         print(e)
@@ -81,11 +92,17 @@ for(idx in seq_along(offerUrls)){
                                     })
     
     kategoria[idx] <- tryCatch(content(str_1) %>%
-                                   html_elements(".offer-viewuss5nw") %>% html_text2(), error = function(e){
+                                   html_elements(".offer-viewoea5v2", ".offer-viewoea5v2:nth-of-type(2)") %>% html_text2(), error = function(e){
                                     print(e)
                                     'NA'
                                 })
     
+    # kategoria[idx] <- tryCatch(content(str_1) %>%
+    #                                        html_elements(xpath = "//*[@id=\"kansas-offerview\"]/div/div[1]/div[1]/ul/li[3]/a[@title]") %>% html_text2(), error = function(e){
+    #                                         print(e)
+    #                                                    'NA'
+    #                                            })
+    #  
     offer_info[idx] <- tryCatch(content(str_1) %>%
                                    html_element(".offer-vieweLojfZ") %>% html_text2(), error = function(e){
                                        print(e)
@@ -102,11 +119,10 @@ for(idx in seq_along(offerUrls)){
                                          print(e)
                                          'NA'
                                      })
-    Sys.sleep(1)
+    Sys.sleep(0.1)
     time <- format(Sys.time(), '%X')
     cat('[#] Iteracja: ', idx, ' | Czas: ', time, '\n')
 }
-
 
 df_ogloszenia <- data.frame(Nazwa = offer_name, Lokalizacja = lokacja, Kategoria = kategoria, Tryb = forma, Wymiar = etat, Umowa = kontrakt, Info = offer_info, Wymagania = offer_requir, Benefity = offer_benefits)
 write_csv2(df_ogloszenia, "pracuj_160622.csv")
